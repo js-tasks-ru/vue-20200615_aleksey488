@@ -48,19 +48,54 @@ export const app = new Vue({
   el: '#app',
 
   data: {
-    //
+    meetup: {},
+    filter: {
+      date: '',
+      participation: '',
+      search: '',
+      view: '',
+    },
   },
 
-  mounted() {
-    // Требуется получить данные митапа с API
+  async mounted() {
+    this.meetup = await this.getMeetupById(MEETUP_ID);
   },
 
   computed: {
-    //
+    processedMeetup() {
+      return {
+        ...this.meetup,
+        agenda:
+          this.meetup.agenda && this.meetup.agenda.length
+            ? this.meetup.agenda.map((agenda) => {
+                return {
+                  ...agenda,
+                  title: agenda.title
+                    ? agenda.title
+                    : agendaItemTitles[agenda.type],
+                  icon: agendaItemIcons[agenda.type] || 'cal-sm',
+                };
+              })
+            : [],
+        cover: this.meetup.imageId
+          ? getMeetupCoverLink(this.meetup)
+          : undefined,
+        date: new Date(this.meetup.date),
+        localeDate: new Date(this.meetup.date).toLocaleString(
+          navigator.language,
+          {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          },
+        ),
+      };
+    },
   },
 
   methods: {
-    // Получение данных с API предпочтительнее оформить отдельным методом,
-    // а не писать прямо в mounted()
+    async getMeetupById(id) {
+      return fetch(`${API_URL}/meetups/${id}`).then((meetup) => meetup.json());
+    },
   },
 });
