@@ -27,7 +27,7 @@ export const MeetupsCalendar = {
   props: {
     meetups: {
       type: Array,
-      require: true,
+      required: true,
     },
   },
 
@@ -41,7 +41,7 @@ export const MeetupsCalendar = {
   computed: {
     days() {
       let year = this.year;
-      let mon = this.month - 1;
+      let mon = this.month;
       let d = new Date(year, mon);
       let days = [];
 
@@ -75,7 +75,7 @@ export const MeetupsCalendar = {
       return days;
     },
     localeDate() {
-      return new Date(this.year, this.month - 1).toLocaleString(
+      return new Date(this.year, this.month).toLocaleDateString(
         navigator.language,
         {
           year: 'numeric',
