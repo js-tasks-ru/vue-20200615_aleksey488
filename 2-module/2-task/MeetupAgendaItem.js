@@ -9,7 +9,7 @@ export const MeetupAgendaItem = {
       </div>
       <div class="meetup-agenda__item-col">{{ processedAgenda.startsAt }} - {{ processedAgenda.endsAt }}</div>
       <div class="meetup-agenda__item-col">
-        <h5 class="meetup-agenda__title" v-html=" processedAgenda.title"></h5>
+        <h5 class="meetup-agenda__title">{{ processedAgenda.title }}</h5>
         <template v-if="processedAgenda.type === 'talk'">
           <p><span>{{ processedAgenda.speaker }}</span><span class="meetup-agenda__dot"></span><span class="meetup-agenda__lang">{{ processedAgenda.language }}</span></p>
           <p>{{ processedAgenda.description }}</p>
