@@ -1,7 +1,3 @@
-/*
-  Полезные функции по работе с датой можно описать вне Vue компонента
- */
-
 export const MeetupsCalendar = {
   name: 'MeetupsCalendar',
 
@@ -9,34 +5,106 @@ export const MeetupsCalendar = {
     <div class="rangepicker__calendar">
       <div class="rangepicker__month-indicator">
         <div class="rangepicker__selector-controls">
-          <button class="rangepicker__selector-control-left"></button>
-          <div>Июнь 2020</div>
-          <button class="rangepicker__selector-control-right"></button>
+          <button class="rangepicker__selector-control-left" @click="prevMonth"></button>
+          <div>{{ localeDate }}</div>
+          <button class="rangepicker__selector-control-right" @click="nextMonth"></button>
         </div>
       </div>
       <div class="rangepicker__date-grid">
-        <div class="rangepicker__cell rangepicker__cell_inactive">28</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">29</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">30</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">31</div>
-        <div class="rangepicker__cell">
-          1
-          <a class="rangepicker__event">Митап</a>
-          <a class="rangepicker__event">Митап</a>
+        <div class="rangepicker__cell"
+            v-for="day in days"
+             :class="{'rangepicker__cell_inactive': day.inactive}"
+        >
+          {{ day.date }}
+          <template v-if="day.meetups && day.meetups.length">
+            <a class="rangepicker__event" v-for="meetup in day.meetups">{{ meetup.title }}</a>
+          </template>
         </div>
-        <div class="rangepicker__cell">2</div>
-        <div class="rangepicker__cell">3</div>
       </div>
     </div>
   </div>`,
 
-  // Пропсы
+  props: {
+    meetups: {
+      type: Array,
+      required: true,
+    },
+  },
 
-  // В качестве локального состояния требуется хранить что-то,
-  // что позволит определить текущий показывающийся месяц.
-  // Изначально должен показываться текущий месяц
+  data() {
+    return {
+      month: new Date().getMonth(),
+      year: new Date().getFullYear(),
+    };
+  },
 
-  // Вычислимые свойства помогут как с получением списка дней, так и с выводом информации
+  computed: {
+    days() {
+      let year = this.year;
+      let mon = this.month;
+      let d = new Date(year, mon);
+      let days = [];
 
-  // Методы понадобятся для переключения между месяцами
+      for (let i = this.getDay(d); i > 0; i--) {
+        days.push({
+          date: new Date(d - 1000 * 60 * 60 * 24 * i).getDate(),
+          inactive: true,
+        });
+      }
+
+      while (d.getMonth() === mon) {
+        let meetups = this.meetups.filter(
+          (meetup) =>
+            new Date(meetup.date).getDate() === d.getDate() &&
+            new Date(meetup.date).getMonth() === mon &&
+            new Date(meetup.date).getFullYear() === year,
+        );
+
+        days.push({ date: d.getDate(), meetups });
+
+        d.setDate(d.getDate() + 1);
+      }
+
+      if (this.getDay(d) !== 0) {
+        for (let i = this.getDay(d); i < 7; i++) {
+          days.push({ date: new Date(d).getDate(), inactive: true });
+          d.setDate(d.getDate() + 1);
+        }
+      }
+
+      return days;
+    },
+    localeDate() {
+      return new Date(this.year, this.month).toLocaleDateString(
+        navigator.language,
+        {
+          year: 'numeric',
+          month: 'long',
+        },
+      );
+    },
+  },
+  methods: {
+    getDay(date) {
+      let day = date.getDay();
+      if (day === 0) day = 7;
+      return day - 1;
+    },
+    nextMonth() {
+      if (this.month === 12) {
+        this.year = this.year + 1;
+        this.month = 1;
+      } else {
+        this.month = this.month + 1;
+      }
+    },
+    prevMonth() {
+      if (this.month === 1) {
+        this.year = this.year - 1;
+        this.month = 12;
+      } else {
+        this.month = this.month - 1;
+      }
+    },
+  },
 };
