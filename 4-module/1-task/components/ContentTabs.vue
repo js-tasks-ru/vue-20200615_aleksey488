@@ -4,8 +4,8 @@
       <router-link
         class="content-tabs__tab"
         active-class="content-tabs__tab_active"
-        v-for="(tab, index) in tabs"
-        :key="index"
+        v-for="tab in customTabs"
+        :key="tab.id"
         :to="tab.to"
       >
         {{ tab.text }}
@@ -24,6 +24,14 @@ export default {
     tabs: {
       type: Array,
       required: true,
+    },
+  },
+  computed: {
+    customTabs() {
+      return this.tabs.map((tab) => {
+        tab.id = Math.random().toFixed(3).substr(2, 3);
+        return tab;
+      });
     },
   },
 };
