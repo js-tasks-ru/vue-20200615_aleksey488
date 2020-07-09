@@ -1,11 +1,18 @@
 <template>
   <div class="content-tabs">
     <div class="content-tabs__nav">
-      <a href="#" class="content-tabs__tab">Page A</a>
-      <a href="#" class="content-tabs__tab">Page B</a>
+      <router-link
+        class="content-tabs__tab"
+        active-class="content-tabs__tab_active"
+        v-for="tab in customTabs"
+        :key="tab.id"
+        :to="tab.to"
+      >
+        {{ tab.text }}
+      </router-link>
     </div>
     <div class="content-tabs__content">
-      Content
+      <slot></slot>
     </div>
   </div>
 </template>
@@ -13,6 +20,20 @@
 <script>
 export default {
   name: 'ContentTabs',
+  props: {
+    tabs: {
+      type: Array,
+      required: true,
+    },
+  },
+  computed: {
+    customTabs() {
+      return this.tabs.map((tab) => {
+        tab.id = Math.random().toFixed(3).substr(2, 3);
+        return tab;
+      });
+    },
+  },
 };
 </script>
 
