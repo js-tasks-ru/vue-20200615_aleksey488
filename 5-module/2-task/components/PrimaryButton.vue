@@ -8,6 +8,7 @@
 import BaseButton from './BaseButton';
 export default {
   name: 'PrimaryButton',
+  inheritAttrs: false,
   components: { BaseButton },
 };
 </script>
