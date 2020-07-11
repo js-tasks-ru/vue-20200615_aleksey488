@@ -1,33 +1,14 @@
+<template>
+  <base-button v-bind="$attrs" v-on="$listeners" class="button_secondary">
+    <slot />
+  </base-button>
+</template>
+
 <script>
 import BaseButton from './BaseButton';
 export default {
   name: 'SecondaryButton',
   components: { BaseButton },
-  props: {
-    block: Boolean,
-    tag: {
-      type: String,
-      default: 'button',
-      validator: (tag) => {
-        return ['button', 'a', 'router-link'].includes(tag);
-      },
-    },
-  },
-  render(createElement) {
-    return createElement(
-      'base-button',
-      {
-        props: this.$props,
-        class: 'button_secondary',
-        on: {
-          click: () => {
-            this.$emit('click');
-          },
-        },
-      },
-      this.$slots.default,
-    );
-  },
 };
 </script>
 
