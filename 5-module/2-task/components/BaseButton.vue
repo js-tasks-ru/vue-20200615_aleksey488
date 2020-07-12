@@ -1,10 +1,27 @@
 <template>
-  <button class="button">content</button>
+  <component
+    :is="tag"
+    class="button"
+    v-on="$listeners"
+    :class="{ button_block: block }"
+  >
+    <slot />
+  </component>
 </template>
 
 <script>
 export default {
   name: 'BaseButton',
+  props: {
+    block: Boolean,
+    tag: {
+      type: String,
+      default: 'button',
+      validator: (tag) => {
+        return ['button', 'a', 'router-link'].includes(tag);
+      },
+    },
+  },
 };
 </script>
 
