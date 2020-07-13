@@ -1,18 +1,62 @@
 <template>
-  <div
-    class="input-group input-group_icon input-group_icon-left input-group_icon-right"
-  >
-    <img class="icon" />
-
-    <input class="form-control form-control_rounded form-control_sm" />
-
-    <img class="icon" />
+  <div class="input-group input-group_icon" :class="iconClass">
+    <slot name="left-icon" />
+    <input
+      v-if="!this.multiline"
+      v-model="value_"
+      v-bind="$attrs"
+      class="form-control"
+      :class="{'form-control_sm': small, 'form-control_rounded': rounded}"
+    />
+    <textarea
+      v-else
+      v-model="value_"
+      v-bind="$attrs"
+      class="form-control"
+      :class="{'form-control_sm': small, 'form-control_rounded': rounded}"
+    />
+    <slot name="right-icon" />
   </div>
 </template>
 
 <script>
 export default {
   name: 'AppInput',
+  props: {
+    small: Boolean,
+    rounded: Boolean,
+    multiline: Boolean,
+    value: String,
+  },
+  data() {
+    return {
+      value_: this.value,
+    };
+  },
+  computed: {
+    iconClass() {
+      return {'input-group_icon-left': !!this.$scopedSlots['left-icon'], 'input-group_icon-right': !!this.$scopedSlots['right-icon']};
+    },
+  },
+  watch: {
+    value_: {
+      deep: true,
+      handler(newValue) {
+        if (newValue !== this.value) {
+          this.$emit('input', newValue);
+          this.$emit('change', newValue);
+        }
+      },
+    },
+    value: {
+      deep: true,
+      handler(newValue) {
+        if (newValue !== this.value_) {
+          this.value_ = newValue;
+        }
+      },
+    },
+  },
 };
 </script>
 
